@@ -9,11 +9,17 @@ import { CardWrapper } from "./card-wrapper";
 import { FormError } from "../form-error";
 import { FormSuccess } from "../form-success";
 import { login } from "@/actions/login";
+import { useSearchParams } from "next/navigation";
 
 export const LoginForm = () => {
+  const searchParams = useSearchParams();
+  const errorUrl =
+    searchParams.get("error") === "OAuthAccountNotLinked"
+      ? "Email Logged By Different Provider"
+      : "";
+
   const [error, setError] = useState<string | undefined>("");
   const [success, setSuccess] = useState<string | undefined>("");
-
   const [isPending, startTransition] = useTransition();
 
   const {
@@ -40,66 +46,69 @@ export const LoginForm = () => {
         });
       });
       reset();
-    } catch (error) {}
+    } catch (error) {
+      throw error;
+    }
   };
+  
   return (
-      <CardWrapper
-        headerLabel="Welcome Back"
-        backButtonLabel="Don't Have an Account"
-        backButtonHref="/auth/signup"
+    <CardWrapper
+      headerLabel="Welcome Back"
+      backButtonLabel="Don't Have an Account"
+      backButtonHref="/auth/signup"
+    >
+      <form
+        {...register}
+        onSubmit={handleSubmit(onSubmit)}
+        className="space-y-4"
       >
-        <form
-          {...register}
-          onSubmit={handleSubmit(onSubmit)}
-          className="space-y-4"
-        >
-          <div className="w-full flex flex-col gap-4 p-1">
-            <Input
-              label="Email"
-              type="email"
-              placeholder="zack@gmail.com"
-              variant="bordered"
-              labelPlacement="outside"
-              radius="sm"
-              errorMessage={errors.email?.message}
-              {...register("email")}
-              disabled={isPending}
-            />
-            {errors.email && (
-              <span className="text-red-500 text-sm font-sans">
-                {errors.email.message}
-              </span>
-            )}
-            <Input
-              label="Password"
-              placeholder="******"
-              type="password"
-              variant="bordered"
-              labelPlacement="outside"
-              radius="sm"
-              errorMessage={errors.password?.message}
-              disabled={isPending}
-              {...register("password")}
-            />
-            {errors.password && (
-              <span className="text-red-500 text-sm font-sans">
-                {" "}
-                {errors.password.message}
-              </span>
-            )}
-          </div>
-          <FormError message={error} />
-          <FormSuccess message={success} />
-          <Button
-            variant="solid"
+        <div className="w-full flex flex-col gap-4 p-1">
+          <Input
+            label="Email"
+            type="email"
+            placeholder="zack@gmail.com"
+            variant="bordered"
+            labelPlacement="outside"
             radius="sm"
-            className="bg-black text-white w-full"
-            type="submit"
+            errorMessage={errors.email?.message}
+            {...register("email")}
             disabled={isPending}
-          >
-            Login
-          </Button>
-        </form>
-      </CardWrapper>
+          />
+          {errors.email && (
+            <span className="text-red-500 text-sm font-sans">
+              {errors.email.message}
+            </span>
+          )}
+          <Input
+            label="Password"
+            placeholder="******"
+            type="password"
+            variant="bordered"
+            labelPlacement="outside"
+            radius="sm"
+            errorMessage={errors.password?.message}
+            disabled={isPending}
+            {...register("password")}
+          />
+          {errors.password && (
+            <span className="text-red-500 text-sm font-sans">
+              {" "}
+              {errors.password.message}
+            </span>
+          )}
+        </div>
+        <FormError message={error || errorUrl} />
+        <FormSuccess message={success} />
+        <Button
+          variant="solid"
+          radius="sm"
+          className="bg-black text-white w-full"
+          type="submit"
+          disabled={isPending}
+        >
+          Login
+        </Button>
+      </form>
+    </CardWrapper>
   );
 };
