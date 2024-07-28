@@ -2,8 +2,10 @@
 import { SignupSchema } from "@/schemas";
 import { z } from "zod";
 import bcrypt from "bcryptjs";
-import { db } from "@/db";
+import { db } from "@/libs";
 import { getUSerEmail } from "@/data/user";
+import { createVerificationToken } from "@/libs/token";
+import { sendVerificationEmail } from "@/libs/mail";
 
 export const signup = async (values: z.infer<typeof SignupSchema>) => {
   const validation = SignupSchema.safeParse(values);
@@ -14,7 +16,7 @@ export const signup = async (values: z.infer<typeof SignupSchema>) => {
 
   const { email, password, name }: any = validation.data;
   const hashedPassword = await bcrypt.hash(password, 10);
-  const existingUser = await getUSerEmail(email)
+  const existingUser = await getUSerEmail(email);
 
   if (existingUser) {
     return { error: "Email Already in use" };
@@ -26,6 +28,9 @@ export const signup = async (values: z.infer<typeof SignupSchema>) => {
       name,
     },
   });
+  const verificationToken = await createVerificationToken(email);
 
-  return { success: "Account Created" };
+  await sendVerificationEmail(verificationToken.email, verificationToken.token);
+  
+  return { success: "Conformation Email Sent" };
 };

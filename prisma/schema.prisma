@@ -49,3 +49,12 @@ model Account {
 
   @@id([provider, providerAccountId])
 }
+
+model VerificationToken {
+  id      String   @id @default(uuid())
+  email   String
+  token   String   @unique
+  expired DateTime
+
+  @@unique([email, token])
+}

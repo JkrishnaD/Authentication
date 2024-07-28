@@ -3,7 +3,8 @@ import { PrismaAdapter } from "@auth/prisma-adapter";
 import { PrismaClient, UserRole } from "@prisma/client";
 import authConfig from "./auth.config";
 import { getUserId } from "./data/user";
-import { db } from "./db";
+import { db } from "./libs";
+
 
 const prisma = new PrismaClient();
 //This is for adding the types which doesn't present in the schema
@@ -29,10 +30,24 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
     },
   },
   callbacks: {
+    async signIn({ user, account }) {
+      console.log(user,account)
+      // To allow the 0Auth providers withOut email verification
+      if (account?.provider !== "credentials") return true;
+
+      //@ts-ignore
+      // To restrict the login without email verification
+      const existingUser = await getUserId(user.id);
+      if (!existingUser?.emailVerified) return false;
+
+      return true;
+    },
     async session({ session, token }) {
+      // to display the user id
       if (session.user && token.sub) {
         session.user.id = token.sub;
       }
+      //to display the role of the user
       if (session.user && token.role) {
         session.user.role = token.role as UserRole;
       }
