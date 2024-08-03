@@ -4,7 +4,8 @@
  * */
 
 export const publicRoutes = [
-    "/"
+    "/",
+    "/auth/new-verification",
 ]
 /** A Bunch of Routeswhich are used for the authentication.
  * These Routes will redirect the users to settings page
@@ -13,7 +14,8 @@ export const publicRoutes = [
 export const authRoutes = [
     "/auth/login",
     "/auth/signup",
-    "/auth/error"
+    "/auth/error",
+    "/auth/reset"
 ]
 /** This is the prefix for api authentication routes
  * Routes that start with this prefix are used for authentication 

@@ -2,7 +2,7 @@ import bcrypt from "bcryptjs";
 import type { NextAuthConfig } from "next-auth";
 import credentials from "next-auth/providers/credentials";
 import { LoginSchema } from "./schemas";
-import { getUSerEmail } from "./data/user";
+import { getUserEmail } from "./data/user";
 import Github from "next-auth/providers/github";
 import google from "next-auth/providers/google";
 
@@ -23,10 +23,10 @@ export default {
         if (validation.success) {
           const { email, password }: any = validation.data;
 
-          const user = await getUSerEmail(email);
+          const user = await getUserEmail(email);
           if (!user || !user.password) return null;
 
-          const passwordMatch = await bcrypt.compareSync(password,user.password);
+          const passwordMatch = bcrypt.compareSync(password, user.password);
           if(passwordMatch){
             return user
           }

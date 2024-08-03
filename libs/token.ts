@@ -19,7 +19,7 @@ export const createVerificationToken = async (email: string) => {
     data: {
       email,
       token,
-      expired: expires,
+      expires
     },
   });
   return verificationToken;

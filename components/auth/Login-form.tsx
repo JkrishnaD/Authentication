@@ -8,8 +8,11 @@ import React, { useState, useTransition } from "react";
 import { CardWrapper } from "./card-wrapper";
 import { FormError } from "../form-error";
 import { FormSuccess } from "../form-success";
-import { login } from "@/actions/login";
+
 import { useSearchParams } from "next/navigation";
+import { Footer } from "./cardFooter";
+import Link from "next/link";
+import { login } from "@/actions/login";
 
 export const LoginForm = () => {
   const searchParams = useSearchParams();
@@ -41,8 +44,8 @@ export const LoginForm = () => {
     try {
       startTransition(() => {
         login(data).then((data) => {
-          setError(data.error);
-          setSuccess(data.success);
+          setError(data?.error);
+          setSuccess(data?.success);
         });
       });
       reset();
@@ -50,7 +53,7 @@ export const LoginForm = () => {
       throw error;
     }
   };
-  
+
   return (
     <CardWrapper
       headerLabel="Welcome Back"
@@ -60,9 +63,9 @@ export const LoginForm = () => {
       <form
         {...register}
         onSubmit={handleSubmit(onSubmit)}
-        className="space-y-4"
+        className="space-y-4 flex justify-center items-center flex-col"
       >
-        <div className="w-full flex flex-col gap-4 p-1">
+        <div className="w-full flex flex-col gap-4 pt-1">
           <Input
             label="Email"
             type="email"
@@ -97,6 +100,7 @@ export const LoginForm = () => {
             </span>
           )}
         </div>
+        <Link className="font-sans text-sm text-slate-500 hover:underline" href="/auth/reset">Forgot Password?</Link>
         <FormError message={error || errorUrl} />
         <FormSuccess message={success} />
         <Button
@@ -108,6 +112,7 @@ export const LoginForm = () => {
         >
           Login
         </Button>
+        <Footer />
       </form>
     </CardWrapper>
   );

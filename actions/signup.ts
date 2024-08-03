@@ -1,9 +1,10 @@
 "use server";
+
 import { SignupSchema } from "@/schemas";
 import { z } from "zod";
 import bcrypt from "bcryptjs";
 import { db } from "@/libs";
-import { getUSerEmail } from "@/data/user";
+import { getUserEmail } from "@/data/user";
 import { createVerificationToken } from "@/libs/token";
 import { sendVerificationEmail } from "@/libs/mail";
 
@@ -16,7 +17,7 @@ export const signup = async (values: z.infer<typeof SignupSchema>) => {
 
   const { email, password, name }: any = validation.data;
   const hashedPassword = await bcrypt.hash(password, 10);
-  const existingUser = await getUSerEmail(email);
+  const existingUser = await getUserEmail(email);
 
   if (existingUser) {
     return { error: "Email Already in use" };

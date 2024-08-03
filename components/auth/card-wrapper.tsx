@@ -2,7 +2,6 @@
 
 import React from "react";
 import { Header } from "./cardHeader";
-import { Footer } from "./cardFooter";
 import { BackButton } from "./back-button";
 
 
@@ -27,7 +26,6 @@ export const CardWrapper: React.FC<cardWrapperProps> = ({
           <Header label={headerLabel} />
         </div>
         {children}
-        <Footer />
         <BackButton label={backButtonLabel} href={backButtonHref} />
       </div>
     </div>

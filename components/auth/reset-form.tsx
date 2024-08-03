@@ -1,6 +1,6 @@
 "use client";
+
 import { useForm } from "react-hook-form";
-import { SignupSchema } from "@/schemas";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button, Input } from "@nextui-org/react";
@@ -8,46 +8,45 @@ import React, { useState, useTransition } from "react";
 import { CardWrapper } from "./card-wrapper";
 import { FormError } from "../form-error";
 import { FormSuccess } from "../form-success";
-import { signup } from "@/actions/signup";
-import { Footer } from "./cardFooter";
+import { ResetSchema } from "@/schemas";
+import { resetPassword } from "@/actions/reset";
 
-export const SignupForm = () => {
+
+export const ResetForm = () => {
   const [error, setError] = useState<string | undefined>("");
   const [success, setSuccess] = useState<string | undefined>("");
-
   const [isPending, startTransition] = useTransition();
+
   const {
     register,
     handleSubmit,
     formState: { errors },
     reset,
-  } = useForm<z.infer<typeof SignupSchema>>({
-    resolver: zodResolver(SignupSchema),
+  } = useForm<z.infer<typeof ResetSchema>>({
+    resolver: zodResolver(ResetSchema),
     defaultValues: {
       email: "",
-      password: "",
     },
   });
 
-  const onSubmit = async (data: any) => {
+  const onSubmit = (values:any) => {
     setError("");
     setSuccess("");
-    try {
-      startTransition(() => {
-        signup(data).then((data) => {
-          setError(data.error);
-          setSuccess(data.success);
-        });
-      });
-      reset()
-    } catch (error) {
-      return null;
-    }
+
+    startTransition(()=>{
+      resetPassword(values)
+       .then((data:any)=>{
+        setError(data?.error)
+        setSuccess(data?.success)
+      })
+    })
+    reset();
   };
+
   return (
     <CardWrapper
-      headerLabel="Create An Account"
-      backButtonLabel="Already Have Account!"
+      headerLabel="Forgot Password"
+      backButtonLabel="Back to Login"
       backButtonHref="/auth/login"
     >
       <form
@@ -55,23 +54,7 @@ export const SignupForm = () => {
         onSubmit={handleSubmit(onSubmit)}
         className="space-y-4"
       >
-        <div className="w-full flex flex-col gap-3 p-1">
-          <Input
-            label="Name"
-            type="text"
-            placeholder="zack"
-            variant="bordered"
-            labelPlacement="outside"
-            radius="sm"
-            errorMessage={errors.name?.message}
-            {...register("name")}
-            disabled={isPending}
-          />
-          {errors.name && (
-            <span className="text-red-500 text-sm font-sans">
-              {errors.name.message}
-            </span>
-          )}
+        <div className="w-full flex flex-col gap-4 p-1">
           <Input
             label="Email"
             type="email"
@@ -88,22 +71,6 @@ export const SignupForm = () => {
               {errors.email.message}
             </span>
           )}
-          <Input
-            label="Password"
-            placeholder="******"
-            type="password"
-            variant="bordered"
-            labelPlacement="outside"
-            radius="sm"
-            errorMessage={errors.password?.message}
-            disabled={isPending}
-            {...register("password")}
-          />
-          {errors.password && (
-            <span className="text-red-500 text-sm font-sans">
-              {errors.password.message}
-            </span>
-          )}
         </div>
         <FormError message={error} />
         <FormSuccess message={success} />
@@ -114,9 +81,8 @@ export const SignupForm = () => {
           type="submit"
           disabled={isPending}
         >
-          Create An Account
+          Send Reset Email
         </Button>
-        <Footer/>
       </form>
     </CardWrapper>
   );

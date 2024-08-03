@@ -1,7 +1,7 @@
 "use server";
 
 import { signIn } from "@/auth";
-import { getUSerEmail } from "@/data/user";
+import { getUserEmail } from "@/data/user";
 import { sendVerificationEmail } from "@/libs/mail";
 import { createVerificationToken } from "@/libs/token";
 import { DEFAULT_LOGIN_REDIRECT } from "@/routes";
@@ -18,7 +18,7 @@ export const login = async (values: z.infer<typeof LoginSchema>) => {
 
   const { email, password }: any = validation.data;
 
-  const existingUser = await getUSerEmail(email);
+  const existingUser = await getUserEmail(email);
 
   if (!existingUser || !existingUser.email || !existingUser.password) {
     return { error: "User Doesn't Exist" };

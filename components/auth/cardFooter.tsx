@@ -11,7 +11,7 @@ export const Footer = () => {
     });
   };
   return (
-    <div className="flex items-center w-full p-4 gap-x-2">
+    <div className="flex items-center w-full p-2 gap-x-2">
       <Button
         onClick={()=>{onClick("google")}}
         className="bg-white w-full"
