@@ -1,6 +1,3 @@
-import { CardHeader } from "@nextui-org/react";
-import { Header } from "./cardHeader";
-import { BackButton } from "./back-button";
 import { CardWrapper } from "./card-wrapper";
 
 export const ErrorCard = () => {

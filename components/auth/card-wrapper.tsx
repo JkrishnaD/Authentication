@@ -20,7 +20,7 @@ export const CardWrapper: React.FC<cardWrapperProps> = ({
   backButtonHref,
 }) => {
   return (
-    <div className="bg-white w-96 rounded-lg flex flex-col items-center justify-center p-3 font-sans">
+    <div className="bg-white w-96 rounded-lg flex flex-col items-center justify-center p-3 font-semibold font-sans">
       <div>
         <div>
           <Header label={headerLabel} />

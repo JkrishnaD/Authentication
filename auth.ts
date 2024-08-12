@@ -4,7 +4,7 @@ import { PrismaClient, UserRole } from "@prisma/client";
 import authConfig from "./auth.config";
 import { getUserId } from "./data/user";
 import { db } from "./libs";
-
+import { getTwoFactorConfirmationById } from "./data/two-factor-confirmation";
 
 const prisma = new PrismaClient();
 //This is for adding the types which doesn't present in the schema
@@ -34,11 +34,25 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
       // To allow the 0Auth providers withOut email verification
       if (account?.provider !== "credentials") return true;
 
-      //@ts-ignore
+      // @ts-ignore
       // To restrict the login without email verification
       const existingUser = await getUserId(user.id);
+
       if (!existingUser?.emailVerified) return false;
 
+      if (existingUser.isTwoFactorEnabled) {
+        const twoFactorconfirmation = await getTwoFactorConfirmationById(
+          existingUser.id
+        );
+        if (!twoFactorconfirmation) {
+          return false;
+        }
+        await db.twoFactorConfirmation.delete({
+          where: {
+            id: twoFactorconfirmation.id,
+          },
+        });
+      }
       return true;
     },
     async session({ session, token }) {

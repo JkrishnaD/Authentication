@@ -23,6 +23,7 @@ export const LoginForm = () => {
   const [error, setError] = useState<string | undefined>("");
   const [success, setSuccess] = useState<string | undefined>("");
   const [isPending, startTransition] = useTransition();
+  const [showTwoFactor, setShowTwoFactor] = useState(false);
 
   const {
     register,
@@ -43,63 +44,99 @@ export const LoginForm = () => {
     try {
       startTransition(() => {
         login(data).then((data) => {
-          setError(data?.error);
-          setSuccess(data?.success);
+          if (data?.error) {
+            setError(data?.error);
+            reset();
+          }
+          if (data?.success) {
+            setError(data?.error);
+            reset();
+          }
+          if (data?.twoFactor) {
+            setShowTwoFactor(true);
+          }
         });
       });
-      reset();
     } catch (error) {
-      throw error;
+      setError("Something Went Wrong");
     }
   };
 
   return (
     <CardWrapper
-      headerLabel="Welcome Back"
+      headerLabel={showTwoFactor ? "Verify It's You" : "Welcome Back"}
       backButtonLabel="Don't Have an Account"
       backButtonHref="/auth/signup"
     >
       <form
         {...register}
         onSubmit={handleSubmit(onSubmit)}
-        className="space-y-4 flex justify-center items-center flex-col"
+        className="space-y-4 flex justify-center pt-1 items-center flex-col"
       >
-        <div className="w-full flex flex-col gap-4 pt-1">
-          <Input
-            label="Email"
-            type="email"
-            placeholder="zack@gmail.com"
-            variant="bordered"
-            labelPlacement="outside"
-            radius="sm"
-            errorMessage={errors.email?.message}
-            {...register("email")}
-            disabled={isPending}
-          />
-          {errors.email && (
-            <span className="text-red-500 text-sm font-sans">
-              {errors.email.message}
-            </span>
-          )}
-          <Input
-            label="Password"
-            placeholder="******"
-            type="password"
-            variant="bordered"
-            labelPlacement="outside"
-            radius="sm"
-            errorMessage={errors.password?.message}
-            disabled={isPending}
-            {...register("password")}
-          />
-          {errors.password && (
-            <span className="text-red-500 text-sm font-sans">
-              {" "}
-              {errors.password.message}
-            </span>
-          )}
-        </div>
-        <Link className="font-sans text-sm text-slate-500 hover:underline" href="/auth/reset">Forgot Password?</Link>
+        {showTwoFactor && (
+          <>
+            <Input
+              label="Verification Code"
+              placeholder="123456"
+              variant="bordered"
+              labelPlacement="outside"
+              radius="sm"
+              errorMessage={errors.code?.message}
+              {...register("code")}
+              disabled={isPending}
+            />
+            {errors.code && (
+              <span className="text-red-500 text-sm font-sans">
+                {errors.code.message}
+              </span>
+            )}
+          </>
+        )}
+        {!showTwoFactor && (
+          <>
+            <div className="w-full flex flex-col gap-4 pt-1">
+              <Input
+                label="Email"
+                type="email"
+                placeholder="zack@gmail.com"
+                variant="bordered"
+                labelPlacement="outside"
+                radius="sm"
+                errorMessage={errors.email?.message}
+                {...register("email")}
+                disabled={isPending}
+              />
+              {errors.email && (
+                <span className="text-red-500 text-sm font-sans">
+                  {errors.email.message}
+                </span>
+              )}
+              <Input
+                label="Password"
+                placeholder="******"
+                type="password"
+                variant="bordered"
+                labelPlacement="outside"
+                radius="sm"
+                errorMessage={errors.password?.message}
+                disabled={isPending}
+                {...register("password")}
+              />
+              {errors.password && (
+                <span className="text-red-500 text-sm font-sans">
+                  {" "}
+                  {errors.password.message}
+                </span>
+              )}
+            </div>
+            <Link
+              className="font-sans text-sm text-slate-500 hover:underline"
+              href="/auth/reset"
+            >
+              Forgot Password?
+            </Link>
+          </>
+        )}
         <FormError message={error || errorUrl} />
         <FormSuccess message={success} />
         <Button
@@ -109,7 +146,7 @@ export const LoginForm = () => {
           type="submit"
           disabled={isPending}
         >
-          Login
+          {showTwoFactor ? "Confirm" : "Login"}
         </Button>
         <Footer />
       </form>
