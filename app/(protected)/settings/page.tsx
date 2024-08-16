@@ -1,25 +1,28 @@
-import React from "react";
-import { auth, signOut } from "../../../auth";
+"use client";
+
+import { logout } from "@/actions/logout";
+import { useCurrentUserSession } from "@/hooks/curent-user";
 import { Button } from "@nextui-org/react";
+import { signOut, useSession } from "next-auth/react";
+
 // Routes which can accesible for the logged in user
-const SettingsPage = async () => {
-  const session = await auth();
+const SettingsPage = () => {
+  const details = useCurrentUserSession();
+
+  const onClick = () => {
+    logout();
+  };
 
   return (
-    <div className="h-screen flex justify-center w-screen items-center bg-gradient-to-tl from-orange-300 to-red-600">
-      <div className="bg-white flex flex-col w-fit justify-center items-center gap-y-4 text-black font-sans rounded-lg p-3 font-semibold"
-      >
-        {JSON.stringify({session})}
-        <form action={async ()=>{
-          "use server";
-
-          await signOut();
-        }}>
-          <Button variant="bordered" className="font-sans font-semibold" type="submit">
-            Logout
-          </Button>
-        </form>
-      </div>
+    <div className="bg-white p-10 flex flex-col items-center rounded-lg">
+      {/* {JSON.stringify(details)} */}
+        <Button
+          onClick={onClick}
+          variant="bordered"
+          className="font-sans font-semibold"
+          type="submit">
+          Sign Out
+        </Button>
     </div>
   );
 };

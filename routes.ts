@@ -3,7 +3,7 @@
  * @type {string[]}
  * */
 
-export const publicRoutes = [
+export const publicRoutes: string[] = [
     "/",
     "/auth/new-verification",
 ]
@@ -11,7 +11,7 @@ export const publicRoutes = [
  * These Routes will redirect the users to settings page
  * @type {string[]}
  * */
-export const authRoutes = [
+export const authRoutes: string[] = [
     "/auth/login",
     "/auth/signup",
     "/auth/error",
@@ -22,10 +22,10 @@ export const authRoutes = [
  * Routes that start with this prefix are used for authentication 
  * @type {string} 
  */
-export const authPrefix = '/api/auth';
+export const authPrefix: string = '/api/auth';
 
 /**
  * The route which takes the user after logging in
  * @type {string}
  */
-export const DEFAULT_LOGIN_REDIRECT = "/settings"
+export const DEFAULT_LOGIN_REDIRECT: string = "/settings"
