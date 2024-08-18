@@ -10,7 +10,7 @@ export const UserInfo = ({ user, label }: userInfoProps) => {
   return (
     <Card className="lg:w-[600px] w-[400px]">
       <CardHeader className="flex justify-center">
-        <p className="font-semibold text-xl">{label}</p>
+        <p className="font-semibold text-xl">🖥️ {label}</p>
       </CardHeader>
       <CardBody className="space-y-2">
         <div className="flex flex-row justify-between border rounded-lg p-1 shadow-sm">

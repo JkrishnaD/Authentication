@@ -144,7 +144,7 @@ export const LoginForm = () => {
           radius="sm"
           className="bg-black text-white w-full"
           type="submit"
-          disabled={isPending}
+          isDisabled={isPending}
         >
           {showTwoFactor ? "Confirm" : "Login"}
         </Button>

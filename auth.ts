@@ -5,17 +5,11 @@ import authConfig from "./auth.config";
 import { getUserId } from "./data/user";
 import { db } from "./libs";
 import { getTwoFactorConfirmationById } from "./data/two-factor-confirmation";
+import { getAccountByUserId } from "./data/account";
+import { ExtendedUser } from "./next-auth";
 
 const prisma = new PrismaClient();
-//This is for adding the types which doesn't present in the schema
-declare module "next-auth" {
-  interface Session {
-    user: {
-      //add any fields here which required to get accessed by user in future
-      role: "USER" | "ADMIN";
-    } & DefaultSession["user"];
-  }
-}
+
 export const { auth, handlers, signIn, signOut } = NextAuth({
   pages: {
     signIn: "/auth/login",
@@ -34,9 +28,8 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
       // To allow the 0Auth providers withOut email verification
       if (account?.provider !== "credentials") return true;
 
-      // @ts-ignore
       // To restrict the login without email verification
-      const existingUser = await getUserId(user.id);
+      const existingUser = await getUserId(user.id as string);
 
       if (!existingUser?.emailVerified) return false;
 
@@ -65,8 +58,12 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
         session.user.role = token.role as UserRole;
       }
       if (session.user) {
-        //@ts-ignore
-        session.user.isTwoFactorEnabled = token.isTwoFactorEnabled as boolean;
+        (session.user as any).isTwoFactorEnabled =
+          token.isTwoFactorEnabled as boolean;
+        session.user.name = token.name;
+
+        session.user.email = token.email as string;
+        (session.user as ExtendedUser).isOAuth = token.isOAuth as boolean;
       }
       return session;
     },
@@ -75,9 +72,18 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
       if (!token.sub) return token;
 
       const existingUser = await getUserId(token.sub);
+
+      const existingAccount = await getAccountByUserId(token.sub);
+
       if (existingUser) {
+        token.name = existingUser.name;
+        token.email = existingUser.email;
         token.role = existingUser.role;
         token.isTwoFactorEnabled = existingUser.isTwoFactorEnabled;
+      }
+
+      if (existingAccount) {
+        token.isOAuth = !!existingAccount;
       }
       return token;
     },

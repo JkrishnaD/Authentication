@@ -1,4 +1,4 @@
-import { useCurrentUserSession } from "@/hooks/curent-user";
+import { useCurrentUser } from "@/hooks/curent-user";
 import {
   Avatar,
   Dropdown,
@@ -11,7 +11,7 @@ import { LogoutButton } from "./logout-button";
 import { BiExit } from "react-icons/bi";
 
 export const UserButton = () => {
-  const user = useCurrentUserSession();
+  const user = useCurrentUser();
   return (
     <Dropdown>
       <DropdownTrigger>
