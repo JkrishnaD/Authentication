@@ -3,9 +3,13 @@ import { UserRole } from "@prisma/client";
 
 export async function GET() {
   const role = await currentRole();
-  //@ts-ignore
+
   if (role === UserRole.ADMIN) {
-    return { success: "Server Action Allowed" };
+    return new Response(JSON.stringify({ success: "Server Action Allowed" }), {
+      status: 200,
+    });
   }
-  return { error: "Server Action Not Allowed" };
+  return new Response(JSON.stringify({ error: "Server Action Not Allowed" }), {
+    status: 403,
+  });
 }

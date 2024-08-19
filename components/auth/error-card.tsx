@@ -5,9 +5,7 @@ export const ErrorCard = () => {
     <div>
       <CardWrapper headerLabel="Oops!! Something Went Wrong"
       backButtonLabel="Back To Login"
-      backButtonHref="/auth/login"
-      children 
-      >
+      backButtonHref="/auth/login"      >
       </CardWrapper>
     </div>
   );
