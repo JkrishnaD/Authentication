@@ -13,11 +13,6 @@ export const LoginButton = ({
   asChild,
 }: loginButtonProps) => {
 
-  if(mode ==="modal"){
-    return <span>
-      Todo : Implement Modal
-    </span>
-  }
   return (
     <Link href="/auth/login" className="cursor-pointer">
       {children}

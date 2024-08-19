@@ -19,7 +19,7 @@ export const LoginForm = () => {
     searchParams.get("error") === "OAuthAccountNotLinked"
       ? "Email Logged By Different Provider"
       : "";
-
+  const callbackUrl = searchParams.get("callback");
   const [error, setError] = useState<string | undefined>("");
   const [success, setSuccess] = useState<string | undefined>("");
   const [isPending, startTransition] = useTransition();
@@ -38,12 +38,12 @@ export const LoginForm = () => {
     },
   });
 
-  const onSubmit = async (data: any) => {
+  const onSubmit = async (values: z.infer<typeof LoginSchema>) => {
     setError("");
     setSuccess("");
     try {
       startTransition(() => {
-        login(data).then((data) => {
+        login(values,callbackUrl).then((data) => {
           if (data?.error) {
             setError(data?.error);
             reset();

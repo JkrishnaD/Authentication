@@ -12,7 +12,10 @@ import { z } from "zod";
 import { db } from "@/libs";
 import { getTwoFactorConfirmationById } from "@/data/two-factor-confirmation";
 
-export const login = async (values: z.infer<typeof LoginSchema>) => {
+export const login = async (
+  values: z.infer<typeof LoginSchema>,
+  callbackUrl: string | null
+) => {
   const validation = LoginSchema.safeParse(values);
 
   if (!validation) {
@@ -50,7 +53,7 @@ export const login = async (values: z.infer<typeof LoginSchema>) => {
       if (hasExpired) {
         return { error: "Token Expired" };
       }
-      
+
       await db.twoFactorToken.delete({
         where: {
           id: twoFactorToken.id,
@@ -81,7 +84,7 @@ export const login = async (values: z.infer<typeof LoginSchema>) => {
     await signIn("credentials", {
       email,
       password,
-      redirectTo: DEFAULT_LOGIN_REDIRECT,
+      redirectTo: callbackUrl || DEFAULT_LOGIN_REDIRECT,
     });
   } catch (error: any) {
     if (error instanceof AuthError) {

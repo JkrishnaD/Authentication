@@ -1,19 +1,24 @@
 import { DEFAULT_LOGIN_REDIRECT } from "@/routes";
 import { Button } from "@nextui-org/react";
 import { signIn } from "next-auth/react";
+import { useSearchParams } from "next/navigation";
 import { FaGithub } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
 
 export const Footer = () => {
+  const searchparams = useSearchParams();
+  const callbackUrl = searchparams.get("callbackUrl");
   const onClick = (provider: "google" | "github") => {
     signIn(provider, {
-      callbackUrl: DEFAULT_LOGIN_REDIRECT,
+      callbackUrl: callbackUrl || DEFAULT_LOGIN_REDIRECT,
     });
   };
   return (
     <div className="flex items-center w-full p-2 gap-x-2">
       <Button
-        onClick={()=>{onClick("google")}}
+        onClick={() => {
+          onClick("google");
+        }}
         className="bg-white w-full"
         radius="sm"
         size="lg"
@@ -22,7 +27,9 @@ export const Footer = () => {
         <FcGoogle></FcGoogle>
       </Button>
       <Button
-      onClick={()=>{onClick("github")}}
+        onClick={() => {
+          onClick("github");
+        }}
         className=" bg-white w-full"
         radius="sm"
         size="lg"
